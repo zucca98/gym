@@ -1,6 +1,25 @@
-export type ExerciseCategory = 'Bodyweight' | 'Weightlifting' | 'Gymnastics' | 'Cardio' | 'Strongman';
+export type ExerciseCategory =
+  | 'Bodyweight'
+  | 'Weightlifting'
+  | 'Gymnastics'
+  | 'Cardio'
+  | 'Strongman';
 
-export type Equipment = 'None' | 'Barbell' | 'Dumbbell' | 'Kettlebell' | 'Jump Rope' | 'Pull-up Bar' | 'Rings' | 'Rower' | 'Bike' | 'Box' | 'Wall Ball' | 'Medicine Ball' | 'Sled' | 'Rope';
+export type Equipment =
+  | 'None'
+  | 'Barbell'
+  | 'Dumbbell'
+  | 'Kettlebell'
+  | 'Jump Rope'
+  | 'Pull-up Bar'
+  | 'Rings'
+  | 'Rower'
+  | 'Bike'
+  | 'Box'
+  | 'Wall Ball'
+  | 'Medicine Ball'
+  | 'Sled'
+  | 'Rope';
 
 export type DifficultyLevel = 'Beginner' | 'Intermediate' | 'Advanced' | 'Elite';
 

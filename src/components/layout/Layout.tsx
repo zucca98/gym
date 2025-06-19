@@ -1,15 +1,15 @@
 import React from 'react';
 import Header from './Header';
 import Navigation from './Navigation';
-import { useAppContext } from '../../context/AppContext';
+import { useAppStore } from '../../store/appStore';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { darkMode } = useAppContext();
-  
+  const darkMode = useAppStore((state) => state.darkMode);
+
   return (
     <div className={`min-h-screen flex flex-col ${darkMode ? 'dark' : ''}`}>
       <Header />
