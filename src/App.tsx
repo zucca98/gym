@@ -1,23 +1,22 @@
-import React from 'react';
-import { AppProvider } from './context/AppContext';
+import React, { Suspense, lazy } from 'react';
 import Layout from './components/layout/Layout';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Pages
-import Dashboard from './pages/Dashboard';
-import ExerciseLibrary from './pages/ExerciseLibrary';
-import WorkoutBuilder from './pages/WorkoutBuilder';
-import WorkoutDiary from './pages/WorkoutDiary';
-import Timer from './pages/Timer';
-import UserProfile from './pages/UserProfile';
-import ExerciseDetail from './pages/ExerciseDetail';
-import WorkoutDetail from './pages/WorkoutDetail';
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const ExerciseLibrary = lazy(() => import('./pages/ExerciseLibrary'));
+const WorkoutBuilder = lazy(() => import('./pages/WorkoutBuilder'));
+const WorkoutDiary = lazy(() => import('./pages/WorkoutDiary'));
+const Timer = lazy(() => import('./pages/Timer'));
+const UserProfile = lazy(() => import('./pages/UserProfile'));
+const ExerciseDetail = lazy(() => import('./pages/ExerciseDetail'));
+const WorkoutDetail = lazy(() => import('./pages/WorkoutDetail'));
 
 function App() {
   return (
-    <AppProvider>
-      <Router>
-        <Layout>
+    <Router>
+      <Layout>
+        <Suspense fallback={<div>Loading...</div>}>
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/exercises" element={<ExerciseLibrary />} />
@@ -28,9 +27,9 @@ function App() {
             <Route path="/timer" element={<Timer />} />
             <Route path="/profile" element={<UserProfile />} />
           </Routes>
-        </Layout>
-      </Router>
-    </AppProvider>
+        </Suspense>
+      </Layout>
+    </Router>
   );
 }
 

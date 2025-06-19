@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Menu, Moon, Sun, Search } from 'lucide-react';
-import { useAppContext } from '../../context/AppContext';
+import { useAppStore } from '../../store/appStore';
 
 const Header: React.FC = () => {
-  const { darkMode, toggleDarkMode } = useAppContext();
+  const darkMode = useAppStore((state) => state.darkMode);
+  const toggleDarkMode = useAppStore((state) => state.toggleDarkMode);
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
@@ -42,9 +43,7 @@ const Header: React.FC = () => {
   return (
     <header
       className={`fixed w-full top-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-white dark:bg-gray-800 shadow-md'
-          : 'bg-transparent dark:bg-transparent'
+        isScrolled ? 'bg-white dark:bg-gray-800 shadow-md' : 'bg-transparent dark:bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -53,9 +52,7 @@ const Header: React.FC = () => {
             <button className="mr-2 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
               <Menu size={24} className="text-gray-700 dark:text-gray-200" />
             </button>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-              {getPageTitle()}
-            </h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">{getPageTitle()}</h1>
           </div>
 
           <div className="flex items-center space-x-2">
@@ -65,7 +62,9 @@ const Header: React.FC = () => {
                   type="text"
                   placeholder="Search..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                  }}
                   className="bg-gray-100 dark:bg-gray-700 py-2 pl-10 pr-4 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 w-full"
                 />
                 <Search
@@ -76,7 +75,9 @@ const Header: React.FC = () => {
             )}
 
             <button
-              onClick={() => setShowSearch(!showSearch)}
+              onClick={() => {
+                setShowSearch(!showSearch);
+              }}
               className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
             >
               <Search size={20} className="text-gray-700 dark:text-gray-200" />
