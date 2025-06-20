@@ -12,6 +12,8 @@ import Timer from './pages/Timer';
 import UserProfile from './pages/UserProfile';
 import ExerciseDetail from './pages/ExerciseDetail';
 import WorkoutDetail from './pages/WorkoutDetail';
+import Statistics from './pages/Statistics';
+import Settings from './pages/Settings';
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
             <Route path="/workouts/:id" element={<WorkoutDetail />} />
             <Route path="/diary" element={<WorkoutDiary />} />
             <Route path="/timer" element={<Timer />} />
+            <Route path="/statistics" element={<Statistics />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="/profile" element={<UserProfile />} />
           </Routes>
         </Layout>

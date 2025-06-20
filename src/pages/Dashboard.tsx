@@ -1,11 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
-import { Play, Clock, Dumbbell, Calendar, Award } from 'lucide-react';
+import { calculateWorkoutStats, formatDuration } from '../utils/statistics';
+import { Play, Clock, Dumbbell, Calendar, Award, TrendingUp, Activity } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
   const { workouts, workoutLogs, exercises, userProfile } = useAppContext();
   const navigate = useNavigate();
+
+  // Calculate comprehensive stats
+  const stats = calculateWorkoutStats(workoutLogs, workouts, exercises);
 
   // Get recent workout logs
   const recentLogs = [...workoutLogs]
@@ -15,50 +19,7 @@ const Dashboard: React.FC = () => {
   // Get favorite exercises
   const favoriteExercises = exercises.filter((ex) => ex.isFavorite).slice(0, 4);
 
-  // Calculate streak (consecutive days with workouts)
-  const calculateStreak = () => {
-    if (workoutLogs.length === 0) return 0;
-    
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    // Sort logs by date
-    const sortedDates = [...workoutLogs]
-      .map(log => {
-        const date = new Date(log.date);
-        date.setHours(0, 0, 0, 0);
-        return date.getTime();
-      })
-      .sort((a, b) => b - a);
-    
-    // Remove duplicates (multiple workouts on same day)
-    const uniqueDates = [...new Set(sortedDates)];
-    
-    let streak = 0;
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    
-    // Check if workout today or yesterday to continue streak
-    const hasRecentWorkout = uniqueDates[0] === today.getTime() || 
-                            uniqueDates[0] === yesterday.getTime();
-                            
-    if (!hasRecentWorkout) return 0;
-    
-    // Count consecutive days
-    for (let i = 0; i < uniqueDates.length; i++) {
-      const currentDate = new Date(uniqueDates[i]);
-      const expectedDate = new Date(today);
-      expectedDate.setDate(today.getDate() - i);
-      
-      if (currentDate.getTime() === expectedDate.getTime()) {
-        streak++;
-      } else {
-        break;
-      }
-    }
-    
-    return streak;
-  };
+
 
   return (
     <div className="py-6 space-y-8">
@@ -87,7 +48,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-gray-500 dark:text-gray-400 text-sm font-semibold">Workout Streak</h3>
@@ -95,16 +56,44 @@ const Dashboard: React.FC = () => {
               <Award size={16} />
             </span>
           </div>
-          <p className="text-3xl font-bold text-gray-900 dark:text-white">{calculateStreak()} days</p>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.currentStreak} days</p>
         </div>
+
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-gray-500 dark:text-gray-400 text-sm font-semibold">Total Workouts</h3>
             <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-300 p-1.5 rounded-lg">
-              <Calendar size={16} />
+              <Activity size={16} />
             </span>
           </div>
-          <p className="text-3xl font-bold text-gray-900 dark:text-white">{workoutLogs.length}</p>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.totalWorkouts}</p>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-gray-500 dark:text-gray-400 text-sm font-semibold">Total Time</h3>
+            <span className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300 p-1.5 rounded-lg">
+              <Clock size={16} />
+            </span>
+          </div>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+            {formatDuration(stats.totalDuration)}
+          </p>
+        </div>
+
+        <div
+          className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md cursor-pointer transition-transform hover:scale-105"
+          onClick={() => navigate('/statistics')}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-gray-500 dark:text-gray-400 text-sm font-semibold">View Stats</h3>
+            <span className="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-300 p-1.5 rounded-lg">
+              <TrendingUp size={16} />
+            </span>
+          </div>
+          <p className="text-sm font-semibold text-purple-600 dark:text-purple-400">
+            Detailed Analytics →
+          </p>
         </div>
       </div>
 
