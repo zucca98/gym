@@ -1,15 +1,15 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Dumbbell, Clock, List, BarChart3, User } from 'lucide-react';
+import { Home, Dumbbell, Clock, List, BarChart3, User, TrendingUp } from 'lucide-react';
 
 const Navigation: React.FC = () => {
   const navItems = [
-    { path: '/', icon: <Home size={24} />, label: 'Home' },
-    { path: '/exercises', icon: <Dumbbell size={24} />, label: 'Exercises' },
-    { path: '/builder', icon: <List size={24} />, label: 'Builder' },
-    { path: '/timer', icon: <Clock size={24} />, label: 'Timer' },
-    { path: '/diary', icon: <BarChart3 size={24} />, label: 'Diary' },
-    { path: '/profile', icon: <User size={24} />, label: 'Profile' },
+    { path: '/', icon: <Home size={20} />, label: 'Home' },
+    { path: '/exercises', icon: <Dumbbell size={20} />, label: 'Exercises' },
+    { path: '/builder', icon: <List size={20} />, label: 'Builder' },
+    { path: '/timer', icon: <Clock size={20} />, label: 'Timer' },
+    { path: '/statistics', icon: <TrendingUp size={20} />, label: 'Stats' },
+    { path: '/profile', icon: <User size={20} />, label: 'Profile' },
   ];
 
   return (

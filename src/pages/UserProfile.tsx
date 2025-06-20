@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
-import { User, Trophy, Target, Trash2, Plus, Save, X } from 'lucide-react';
+import { User, Trophy, Target, Trash2, Plus, Save, X, Settings } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { PersonalRecord, Goal } from '../types';
 
 const UserProfile: React.FC = () => {
   const { userProfile, exercises, updateUserProfile } = useAppContext();
+  const navigate = useNavigate();
   
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [name, setName] = useState(userProfile?.name || '');
@@ -163,12 +165,21 @@ const UserProfile: React.FC = () => {
               Save
             </button>
           ) : (
-            <button
-              onClick={() => setIsEditingProfile(true)}
-              className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1.5 rounded-lg text-sm"
-            >
-              Edit
-            </button>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => navigate('/settings')}
+                className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1.5 rounded-lg text-sm flex items-center"
+              >
+                <Settings size={16} className="mr-1" />
+                Settings
+              </button>
+              <button
+                onClick={() => setIsEditingProfile(true)}
+                className="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm"
+              >
+                Edit
+              </button>
+            </div>
           )}
         </div>
         

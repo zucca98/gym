@@ -3,6 +3,57 @@ import { Exercise, Workout, WorkoutLog, UserProfile, TimerSettings } from '../ty
 import { sampleExercises } from '../data/exercises';
 import { sampleWorkouts } from '../data/workouts';
 
+// LocalStorage utility functions
+const STORAGE_KEYS = {
+  EXERCISES: 'crossfit-app-exercises',
+  WORKOUTS: 'crossfit-app-workouts',
+  WORKOUT_LOGS: 'crossfit-app-workout-logs',
+  USER_PROFILE: 'crossfit-app-user-profile',
+  DARK_MODE: 'crossfit-app-dark-mode',
+  TIMER_SETTINGS: 'crossfit-app-timer-settings',
+};
+
+const loadFromStorage = <T,>(key: string, defaultValue: T): T => {
+  try {
+    const item = localStorage.getItem(key);
+    if (!item) return defaultValue;
+
+    const parsed = JSON.parse(item);
+
+    // Handle Date objects in the data
+    if (Array.isArray(parsed)) {
+      return parsed.map(item => ({
+        ...item,
+        ...(item.createdAt && { createdAt: new Date(item.createdAt) }),
+        ...(item.updatedAt && { updatedAt: new Date(item.updatedAt) }),
+        ...(item.date && { date: new Date(item.date) }),
+        ...(item.deadline && { deadline: new Date(item.deadline) }),
+      })) as T;
+    } else if (parsed && typeof parsed === 'object') {
+      return {
+        ...parsed,
+        ...(parsed.createdAt && { createdAt: new Date(parsed.createdAt) }),
+        ...(parsed.updatedAt && { updatedAt: new Date(parsed.updatedAt) }),
+        ...(parsed.date && { date: new Date(parsed.date) }),
+        ...(parsed.deadline && { deadline: new Date(parsed.deadline) }),
+      } as T;
+    }
+
+    return parsed;
+  } catch (error) {
+    console.error(`Error loading ${key} from localStorage:`, error);
+    return defaultValue;
+  }
+};
+
+const saveToStorage = <T,>(key: string, value: T): void => {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    console.error(`Error saving ${key} to localStorage:`, error);
+  }
+};
+
 interface AppContextType {
   // State
   exercises: Exercise[];
@@ -51,12 +102,57 @@ const defaultTimerSettings: TimerSettings = {
 };
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
-  const [exercises, setExercises] = useState<Exercise[]>(sampleExercises);
-  const [workouts, setWorkouts] = useState<Workout[]>(sampleWorkouts);
-  const [workoutLogs, setWorkoutLogs] = useState<WorkoutLog[]>([]);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(defaultUserProfile);
-  const [darkMode, setDarkMode] = useState<boolean>(false);
-  const [timerSettings, setTimerSettings] = useState<TimerSettings>(defaultTimerSettings);
+  // Initialize state with localStorage data or defaults
+  const [exercises, setExercises] = useState<Exercise[]>(() => {
+    const stored = loadFromStorage(STORAGE_KEYS.EXERCISES, null);
+    return stored && stored.length > 0 ? stored : sampleExercises;
+  });
+
+  const [workouts, setWorkouts] = useState<Workout[]>(() => {
+    const stored = loadFromStorage(STORAGE_KEYS.WORKOUTS, null);
+    return stored && stored.length > 0 ? stored : sampleWorkouts;
+  });
+
+  const [workoutLogs, setWorkoutLogs] = useState<WorkoutLog[]>(() =>
+    loadFromStorage(STORAGE_KEYS.WORKOUT_LOGS, [])
+  );
+
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(() =>
+    loadFromStorage(STORAGE_KEYS.USER_PROFILE, defaultUserProfile)
+  );
+
+  const [darkMode, setDarkMode] = useState<boolean>(() =>
+    loadFromStorage(STORAGE_KEYS.DARK_MODE, false)
+  );
+
+  const [timerSettings, setTimerSettings] = useState<TimerSettings>(() =>
+    loadFromStorage(STORAGE_KEYS.TIMER_SETTINGS, defaultTimerSettings)
+  );
+
+  // Save to localStorage whenever state changes
+  useEffect(() => {
+    saveToStorage(STORAGE_KEYS.EXERCISES, exercises);
+  }, [exercises]);
+
+  useEffect(() => {
+    saveToStorage(STORAGE_KEYS.WORKOUTS, workouts);
+  }, [workouts]);
+
+  useEffect(() => {
+    saveToStorage(STORAGE_KEYS.WORKOUT_LOGS, workoutLogs);
+  }, [workoutLogs]);
+
+  useEffect(() => {
+    saveToStorage(STORAGE_KEYS.USER_PROFILE, userProfile);
+  }, [userProfile]);
+
+  useEffect(() => {
+    saveToStorage(STORAGE_KEYS.DARK_MODE, darkMode);
+  }, [darkMode]);
+
+  useEffect(() => {
+    saveToStorage(STORAGE_KEYS.TIMER_SETTINGS, timerSettings);
+  }, [timerSettings]);
 
   useEffect(() => {
     // Apply dark mode to body element
