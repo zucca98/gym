@@ -44,7 +44,7 @@ const Header: React.FC = () => {
       className={`fixed w-full top-0 z-50 transition-all duration-300 ${
         isScrolled
           ? 'bg-white dark:bg-gray-800 shadow-md'
-          : 'bg-transparent dark:bg-transparent'
+          : 'bg-white dark:bg-gray-900' // Changed dark:bg-transparent to dark:bg-gray-900
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

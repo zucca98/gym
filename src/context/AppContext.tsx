@@ -55,7 +55,13 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [workouts, setWorkouts] = useState<Workout[]>(sampleWorkouts);
   const [workoutLogs, setWorkoutLogs] = useState<WorkoutLog[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(defaultUserProfile);
-  const [darkMode, setDarkMode] = useState<boolean>(false);
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    const storedPreference = localStorage.getItem('darkMode');
+    if (storedPreference !== null) {
+      return JSON.parse(storedPreference);
+    }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
   const [timerSettings, setTimerSettings] = useState<TimerSettings>(defaultTimerSettings);
 
   useEffect(() => {
@@ -65,6 +71,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     } else {
       document.documentElement.classList.remove('dark');
     }
+    // Save preference to localStorage
+    localStorage.setItem('darkMode', JSON.stringify(darkMode));
   }, [darkMode]);
 
   // Exercise Functions
